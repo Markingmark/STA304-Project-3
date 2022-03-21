@@ -1,0 +1,323 @@
+---
+title: "STA304 Paper3"
+author: "Jinli Xu & Yichen Duo"
+date: '2022-03-18'
+output:
+  html_document:
+    df_print: paged
+  toc: yes
+  number_sections: yes
+  pdf_document: null
+abstract: youhdiux
+bibliography: ref_list.bib
+---
+
+```{r}
+library(tidyverse)
+library(kableExtra)
+library(readr)
+library(NHANES)
+library(glmnet)
+library(rms)
+AA234RAH <- read_csv("AA234RAH.csv")
+```
+
+health （srh_110）% 和有没有受过威胁
+
+```{r}
+a = sum(AA234RAH$cbu_140==1)
+b = sum(AA234RAH$cbu_140==2)
+c = sum(AA234RAH$cbu_140==6)
+cbu110_150table <- AA234RAH %>% filter(!is.na(cbu_140)) %>% 
+  group_by(srh_110) %>% summarise(yes = sum(cbu_140 == 1), no = sum(cbu_140 == 2),
+                                  valid_skip = sum(cbu_140 == 6))
+knitr::kable(cbu110_150table)
+```
+
+mental health（srh_115） % 和有没有受过威胁
+
+```{r}
+cbu115_150table <- AA234RAH %>% filter(!is.na(cbu_150)) %>% 
+  group_by(srh_115) %>% summarise(yes = sum(cbu_140 == 1), 
+                                  no = sum(cbu_140 == 2),
+                                  valid_skip = sum(cbu_140 == 6))
+knitr::kable(cbu115_150table)
+```
+
+yes 的比例高 （cbu110 140）（上面）
+
+yes (cbu110 140)里mental==5的：（下面）
+
+```{r}
+cexsrh115table <- AA234RAH %>% 
+  group_by(cbu_110) %>% summarise(men1 = sum(srh_115 == 1), 
+                                  men2 = sum(srh_115 == 2),
+                                  men3 = sum(srh_115 == 3),
+                                  men4 = sum(srh_115 == 4),
+                                  men5 = sum(srh_115 == 5))
+knitr::kable(cexsrh115table)
+
+```
+
+mental health（srh_115） == 5 的人 和童年 （cexabu）
+
+```{r}
+d = sum(AA234RAH$cexabu == 1)
+e = sum(AA234RAH$cexabu == 2)
+f = sum(AA234RAH$cexabu == 3)
+cexsrh115table <- AA234RAH %>% 
+  group_by(srh_115) %>% summarise(never = sum(cexabu == 1), 
+                                  both = sum(cexabu == 2),
+                                  or = sum(cexabu == 3))
+knitr::kable(cexsrh115table)
+```
+
+phy(cexphys) or sex(cexsex) 和 mental(srh_115)
+
+```{r}
+physex <- AA234RAH %>% ggplot(aes(x=cexphys,fill=srh_115==5)) + geom_bar() + theme_classic()
+physex
+```
+
+cexphys he srh115(mental)
+
+```{r}
+cexsrh115table <- AA234RAH %>% 
+  group_by(drp_110) %>% summarise(men1 = sum(srh_115 == 1), 
+                                  men2 = sum(srh_115 == 2),
+                                  men3 = sum(srh_115 == 3),
+                                  men4 = sum(srh_115 == 4),
+                                  men5 = sum(srh_115 == 5))
+knitr::kable(cexsrh115table)
+```
+
+俩人都everyday喝酒的
+
+```{r}
+cexsrh115table <- AA234RAH %>% filter(drp_110 == 1 , drr_110 == 1) %>% summarise(men1 = sum(srh_115 == 1), 
+                                  men2 = sum(srh_115 == 2),
+                                  men3 = sum(srh_115 == 3),
+                                  men4 = sum(srh_115 == 4),
+                                  men5 = sum(srh_115 == 5))
+
+srh110table <- AA234RAH %>% filter(drp_110 == 1 , drr_110 == 1) %>% summarise(men1 = sum(srh_110 == 1), 
+                                  men2 = sum(srh_110 == 2),
+                                  men3 = sum(srh_110 == 3),
+                                  men4 = sum(srh_110 == 4),
+                                  men5 = sum(srh_110 == 5))
+
+table <- AA234RAH %>% summarise(men1 = sum(srh_115 == 1), 
+                                  men2 = sum(srh_115 == 2),
+                                  men3 = sum(srh_115 == 3),
+                                  men4 = sum(srh_115 == 4),
+                                  men5 = sum(srh_115 == 5))
+knitr::kable(cexsrh115table)
+knitr::kable(srh110table)
+knitr::kable(table)
+```
+
+```{r}
+firend <- AA234RAH %>% filter(isl_100<=200 & srh_115 < 6) 
+firend$mental[firend$srh_115==1] <- "Exellent"
+firend$mental[firend$srh_115==2] <- "Very good"
+firend$mental[firend$srh_115==3] <- "Good"
+firend$mental[firend$srh_115==4] <- "Fair"
+firend$mental[firend$srh_115==5] <- "Poor"
+
+ggplot(data = firend, aes(x = mental, y = isl_100))+geom_boxplot()+theme_classic()+labs(x = "statement of mental level", y = "Number of close firends", title = " Mental health level and the number of firends")
+```
+把model要用的数据清理干净 把valid skip换成0
+
+```{r}
+nrow(AA234RAH)
+clean_data <- AA234RAH %>% filter(srh_115 < 6 & isl_100 <= 200)
+#clean cbu_110 create new varibale cbu_110n
+clean_data$cbu_110n[clean_data$cbu_110==1] <- 1
+clean_data$cbu_110n[clean_data$cbu_110==2] <- 2
+clean_data$cbu_110n[clean_data$cbu_110 > 2] <- 0
+#clean cbu_140 create new varibale cbu_140n
+clean_data$cbu_140n[clean_data$cbu_140==1] <- 1
+clean_data$cbu_140n[clean_data$cbu_140==2] <- 2
+clean_data$cbu_140n[clean_data$cbu_140 > 2] <- 0
+#cexabu
+clean_data$cexabun[clean_data$cexabu==1] <- 1
+clean_data$cexabun[clean_data$cexabu==2] <- 2
+clean_data$cexabun[clean_data$cexabu==3] <- 3
+clean_data$cexabun[clean_data$cexabu > 3] <- 0
+#cexphys
+clean_data$cexphysn[clean_data$cexphys==1] <- 1
+clean_data$cexphysn[clean_data$cexphys==2] <- 2
+clean_data$cexphysn[clean_data$cexphys > 2] <- 0
+#cexsex
+clean_data$cexsexn[clean_data$cexsex==1] <- 1
+clean_data$cexsexn[clean_data$cexsex==2] <- 2
+clean_data$cexsexn[clean_data$cexsex > 2] <- 0
+#cex_080
+clean_data$cex_080n[clean_data$cex_080==1] <- 1
+clean_data$cex_080n[clean_data$cex_080==2] <- 2
+clean_data$cex_080n[clean_data$cex_080==3] <- 3
+clean_data$cex_080n[clean_data$cex_080==4] <- 4
+clean_data$cex_080n[clean_data$cex_080==5] <- 5
+clean_data$cex_080n[clean_data$cex_080>5] <- 0
+#drp_110
+clean_data$drp_110n[clean_data$drp_110 ==1] <- 1
+clean_data$drp_110n[clean_data$drp_110 ==2] <- 2
+clean_data$drp_110n[clean_data$drp_110 ==3] <- 3
+clean_data$drp_110n[clean_data$drp_110 ==4] <- 4
+clean_data$drp_110n[clean_data$drp_110 ==5] <- 5
+clean_data$drp_110n[clean_data$drp_110 ==6] <- 6
+clean_data$drp_110n[clean_data$drp_110 ==7] <- 7
+clean_data$drp_110n[clean_data$drp_110 > 7] <- 0
+#drr_110
+clean_data$drr_110n[clean_data$drr_110 ==1] <- 1
+clean_data$drr_110n[clean_data$drr_110 ==2] <- 2
+clean_data$drr_110n[clean_data$drr_110 ==3] <- 3
+clean_data$drr_110n[clean_data$drr_110 ==4] <- 4
+clean_data$drr_110n[clean_data$drr_110 ==5] <- 5
+clean_data$drr_110n[clean_data$drr_110 ==6] <- 6
+clean_data$drr_110n[clean_data$drr_110 ==7] <- 7
+clean_data$drr_110n[clean_data$drr_110 > 7] <- 0
+#dup_100
+clean_data$dup_100n[clean_data$dup_100 ==1] <- 1
+clean_data$dup_100n[clean_data$dup_100 ==2] <- 2
+clean_data$dup_100n[clean_data$dup_100 > 2] <- 0
+#dur_100
+clean_data$dur_100n[clean_data$dur_100 ==1] <- 1
+clean_data$dur_100n[clean_data$dur_100 ==2] <- 2
+clean_data$dur_100n[clean_data$dur_100 > 2] <- 0
+#dur_110
+clean_data$dur_110n[clean_data$dur_110 ==1] <- 1
+clean_data$dur_110n[clean_data$dur_110 ==2] <- 2
+clean_data$dur_110n[clean_data$dur_110 > 2] <- 0
+#hom_10
+clean_data$hom_10n[clean_data$hom_10 ==1] <- 1
+clean_data$hom_10n[clean_data$hom_10 ==2] <- 2
+clean_data$hom_10n[clean_data$hom_10 > 2] <- 0
+new_table <- clean_data
+clean_data <- new_table[sample(seq_len(nrow(new_table)),size = 25000),]
+test <- new_table[!new_table$CASEID %in% clean_data$CASEID,]
+nrow(test)
+nrow(clean_data)
+```
+
+
+建立一个一堆东西的model：
+
+```{r}
+model_full_1.0 <- lm(clean_data$srh_115 ~ clean_data$isl_100 + clean_data$cbu_110n + clean_data$cbu_140n + clean_data$cexabun + clean_data$cexphysn + clean_data$cexsexn + clean_data$cex_080n + clean_data$drp_110n + clean_data$drr_110n + clean_data$dup_100n + clean_data$dur_100n + clean_data$dur_110n + clean_data$hom_10n,data = new_data)
+
+```
+Checking for the varisnce inflation factor(VIF)
+model1
+```{r}
+vif(model_full_1.0)
+```
+cbu110,140 vif有点儿高但是其实是两个不一样的问题所以我还是都保留了 然后：
+
+Reduce model 1.0 by steprise regression （就是那个会一直加加减减（用的both）东西的步骤）
+升级成model1.1
+```{r}
+model_full_1.1 <- step(model_full_1.0, direction="both")
+```
+
+cbu110 cbu140 similary so I use F test to check which can have better model. 
+
+```{r}
+model110 <- lm(clean_data$srh_115 ~ clean_data$isl_100 + clean_data$cbu_110n + clean_data$cexabun + clean_data$cexphysn + 
+    clean_data$cexsexn + clean_data$cex_080n + clean_data$drr_110n + 
+    clean_data$dup_100n + clean_data$dur_100n + clean_data$dur_110n + 
+    clean_data$hom_10n)
+model140 <- lm(clean_data$srh_115 ~ clean_data$isl_100 + 
+    clean_data$cbu_140n + clean_data$cexabun + clean_data$cexphysn + 
+    clean_data$cexsexn + clean_data$cex_080n + clean_data$drr_110n + 
+    clean_data$dup_100n + clean_data$dur_100n + clean_data$dur_110n + 
+    clean_data$hom_10n)
+modelcexabun <- lm(clean_data$srh_115 ~ clean_data$isl_100 + 
+    clean_data$cbu_110n + clean_data$cexabun + 
+    clean_data$cex_080n + clean_data$drr_110n + 
+    clean_data$dup_100n + clean_data$dur_100n + clean_data$dur_110n + 
+    clean_data$hom_10n)
+anova(model110,model_full_1.1)
+```
+p value of F test is 5.333e-05 < 5%. So full model will be better keep the cbu_110
+
+```{r}
+anova(model140,model_full_1.1)
+```
+p value of F test is 2.2e-16 < 5%. So full model will be better keep the cbu_140
+
+
+```{r}
+vif(model_full_1.1)
+```
+
+```{r}
+anova(modelcexabun,model_full_1.1)
+```
+还是保留好
+。。。。
+AIC compare 110 140
+
+```{r}
+AIC(model110)
+AIC(model140)
+BIC(model110)
+BIC(model140)
+```
+keep 110 better
+so I delete 140
+
+```{r}
+modelcexphysn <- lm(clean_data$srh_115 ~ clean_data$isl_100 + 
+    clean_data$cbu_110n + clean_data$cexphysn + 
+    clean_data$cex_080n + clean_data$drr_110n + 
+    clean_data$dup_100n + clean_data$dur_100n + clean_data$dur_110n + 
+    clean_data$hom_10n)
+modelcexsexn <- lm(clean_data$srh_115 ~ clean_data$isl_100 + 
+    clean_data$cbu_110n + clean_data$cexsexn + 
+    clean_data$cex_080n + clean_data$drr_110n + 
+    clean_data$dup_100n + clean_data$dur_100n + clean_data$dur_110n + 
+    clean_data$hom_10n)
+
+AIC(modelcexabun)
+AIC(modelcexphysn)
+AIC(modelcexsexn)
+BIC(modelcexabun)
+BIC(modelcexphysn)
+BIC(modelcexsexn)
+
+```
+
+use cexabun is best have lowest AIC and BIC
+delete cexphysn and cexsexn
+
+然后比一比 吸大麻(100)，和至幻药物(110)的留哪个
+final model:
+```{r}
+modeldur100 <- lm(clean_data$srh_115 ~ clean_data$isl_100 + 
+    clean_data$cbu_110n + clean_data$cexphysn + 
+    clean_data$cex_080n + clean_data$drr_110n + 
+    clean_data$dup_100n + clean_data$dur_100n + 
+    clean_data$hom_10n)
+modeldur110 <- lm(clean_data$srh_115 ~ clean_data$isl_100 + 
+    clean_data$cbu_110n + clean_data$cexphysn + 
+    clean_data$cex_080n + clean_data$drr_110n + 
+    clean_data$dup_100n + clean_data$dur_110n + 
+    clean_data$hom_10n)
+AIC(modeldur100)
+AIC(modeldur110)
+BIC(modeldur100)
+BIC(modeldur110)
+```
+留下吸大麻 （100）
+```{r}
+modeldur100 <- lm(clean_data$srh_115 ~ clean_data$isl_100 + 
+    clean_data$cbu_110n + clean_data$cexphysn + 
+    clean_data$cex_080n + clean_data$drr_110n + 
+    clean_data$dup_100n + clean_data$dur_100n + 
+    clean_data$hom_10n)
+```
+
+
+
+
