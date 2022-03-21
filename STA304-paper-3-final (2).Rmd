@@ -1,0 +1,267 @@
+---
+title: "A Study Based on GSS Survey--Analytical Model of Factors Contributing to Negative Self-assessed Mental Status"
+author: "Jinli Xu & Yichen Duo"
+date: '2022-03-20'
+output: pdf_document
+abstract: "Based on the relevant sociological data of GSS 2016, this paper mainly extracts the influencing factors of related people's psychological state, including family, childhood, educational background, alcoholism, drug use, etc., to predict and analyze the impact on people's psychological self-evaluation the largest relevant factor. And based on the data, a model is established, which can predict and analyze what kind of individuals are most likely to have psychological problems and negative self-evaluation. At the end of the article, we set up our own questionnaire to improve and supplement the biased and inducing questions in the GSS questionnaire."
+bibliography: ref_list.bib
+---
+
+# Introduction
+
+Today, the overall happiness level of residents has a high degree of attention as a topic that is widely concerned by the government. With sufficient and complete statistical analysis, relevant surveys usually begin with a multi-faceted social questionnaire. One of the most important questionnaire sources is the General Social Survey (GSS), conducted by Canadian Government. In this paper, specifically, General Social Survey Cycle 28: Canadians’ Safety and Security was used as a source of study, to further extend and analysis the relationship between self-assessed mental health status and its affecting factors. In general, mental health issues are a real health risk in today's increasingly competitive society. In the past two decades, depression and various personality disorders have further entered the public's field of vision. In addition to congenital and pathological psychological diseases, there are still many mental illness victims suffering from related psychological problems due to various acquired reasons. Torture, in this case, the analysis and study of the causes of psychological problems has considerable practical value. Psychologically speaking, we believe that each person's family situation, education, drug use, criminal experience and other factors have an intuitive and huge impact on self-evaluation of psychological status, but relevant statistical research is relatively lacking.  We believe that under this premise, the statistical analysis and research on related surveys have considerable practical value.
+
+GSS is a highly authoritative government questionnaire system. Its investigation direction covers multiple aspects of Canadian residents' life, aiming to understand residents’ life and psychological state comprehensively and objectively, and provide timely information sources for professional work in multiple social sectors and social work systems. Statistically speaking, the survey sample size is rich, and the scope of coverage is wide, and a large amount of information is collected in the form of questionnaires to establish a very effective database. In this paper, by collecting and screening multiple data types in GSS 2016, we aim to establish a model to analyze the factors that have a greater impact on the psychological state of self-assessment, and the direction of the influence of these factors on the psychological self-assessment (in general, positive, or negative). We believe that relevant model research is helpful as an auxiliary tool to help entities in need (such as government, or NGO) to predict and identify people with high risk of mental illness and provide targeted help or advice.
+
+Specifically, we mainly studied the family situation of the respondents in the GSS database, including parents' educational background, domestic violence-related experience, drug use, neighbors' housing situation (such as house price), and other information. We believe that a person's acquired psychological state should be mainly affected by a variety of external and personal factors. Among them, external factors should mainly come from family factors, growth environment factors, and educational factors; while personal factors include drug use, criminal tendencies and so on. In the GSS database, relevant information is collected by multiple questionnaires with multiple response options. In the above questionnaire, the answers usually consist of numerical options from 1-5, where each number represents the response from agree to disagree and unwilling to answer. We first extracted the data related to the research questions of interest from the GSS database, and further screened the data categories with actual research value in the answer data for analysis. The specific screening and extraction methods will be introduced in detail later in the article.
+
+```{r 100,message=FALSE,echo=FALSE,warning=FALSE}
+library(tidyverse)
+library(kableExtra)
+library(rms)
+AA234RAH <- read_csv("AA234RAH.csv")
+head(AA234RAH)
+```
+# Methodology
+
+The GSS database contains extensive data and a very specific user guide. First, after determining the research direction, we conducted specific research and study on this user guide, aiming to understand the specific meaning of relevant data in the GSS database, including data structure, problem classification, and the meaning of relevant data codes. Then, we conducted a preliminary arrangement of the data according to our own research direction. The main purpose of this collation is to preliminarily select a data set related to our research direction.
+
+Next, we began to extract data from the initially screened data set that were relatively specific and that we believed had a greater impact on the main variable of our study, "psychological self-assessment status." In this step, we mainly refer to a part of the psychological literature and related psychological research articles. After reading many related articles, we mainly selected some relatively intuitive related variables from external factors, including whether a person has been abused (physically or psychologically) in his self-judgment, various family-related factors, parental Education; in terms of internal factors, we mainly used data related to drug use and alcohol use to build the model.
+
+The main reason for the limited data selection is that the data collection in the GSS database is quite biased and discriminatory. We will discuss these limitations in detail in the discussion section at the end of the article. But in general, most of the questions and answers in the GSS database are based entirely on the subjects' own willingness to answer and self-knowledge. We believe that this form of questionnaire survey without any supervision and verification process is difficult to avoid many fallacies; further, many questions in the questionnaire are quite psychologically inducing, although from the starting point, the intention of the question is well-intentioned, But the feedback it receives may be far from the truth. Considering these factors, after carefully studying the GSS database and its user manual, we have selected the above-mentioned data with strong correlation and influence to analyze and build models. For specific data selection, please refer to the data table column at the back of the article.
+
+Immediately after the data extraction step, we started trying to build our own model. The main significance of establishing a model is that firstly, we can establish a certain predictive ability for future related problem data. This kind of prediction has two important values: 1. It can be used as a reference study and analyze the trend of related problems in the future. As a result, it will play a certain reference role in the research on the impact of social development on residents' psychological state; 2. Make a certain reference for the validity of the relevant answers. If the data sets of similar questions in the future are far from the prediction results of the model, then There may be some problems with the validity of the data itself. Returning to the topic, we established a preliminary model through the Linear Fitting method, and then we cleaned up a large amount of noisy data, including many invalid answers contained in the answer database, such as valid skip and rejected answers. After that, we compared and analyzed the validity of the model through AIC and BIC, after confirming that the model has research value, we draw the Normal QQ Plot and the research model VIF to further study the validity of the model and determine the variables we studied and There is a specific causal relationship between the study subjects.
+
+# Data and Result
+In terms of our own data analysis and results, we first determined the causal relationship between the extracted data and the research subjects. It is certain that the individual's psychological self-assessment is highly correlated with both external and internal factors. Referring to the model diagram after the article, we can see that the results of linear fitting are quite convincing. Although in general the model itself has some biases and problems, for example, there is an unexpected interaction between the influencing factors (for example, people who were violated in their childhood are more likely to drink alcohol). Overall, the model satisfied us.
+
+Specifically, we divide the results into two parts for interpretation. First, in terms of external factors, various experiences in a person's life, especially in childhood, have an extremely important impact on his life. On the other hand, the quality of the family environment also affects the development of a person's life. Our research further confirmed that a person with a complete family and parental care is unlikely to have potential psychological problems after growing up.
+
+On the other hand, educational background and the correlation of psychological problems have also been confirmed. First, we found through the data in the GSS database (see the chart below for details) that the educational background of both parents will greatly positively affect the offspring’s willingness to receive education, and the higher the offspring’s education, the higher the probability of psychological problems. little. From a sociological point of view, this can be fully explained - higher education often means higher participation in social behavior and more ability to realize self-worth (ideal pursuit, quality of life), higher education population in society often enjoy more resources and opportunities, thereby reducing the risk of psychological problems. Higher levels of education have been associated with better mental health. Causal relationships are notoriously difficult to establish and are generally multifactorial. Nevertheless, education has been shown to be one of the clearest indicators of life outcomes such as employment, income, and social status. It is thus a strong predictor for improved health and well-being. (Dr. Nicola Williams, Ph.D. 2017)
+
+For the internal factors of the human ego, we found that both alcohol use and drugs (including narcotics and recreational drugs) are highly constructive for the occurrence of psychological problems. Logically speaking, whether it is alcoholism or drug addiction, it is easy to cause a disconnection between the individual and the society, thereby causing psychological problems. However, it should be noted that various internal factors, such as alcohol addiction, are often caused by psychological or physical needs caused by a variety of external factors. For example, abused people are more likely to seek self-paralysis and comfort in alcohol. The formation of psychological problems is attributed to personal factors such as alcohol, which is not objective and biased.
+
+# Survey
+
+In addition to analyzing and studying GSS data, we also realized that there are various shortcomings in GSS data collection. The assessment of mental health in this questionnaire is not very good. Considering that the questionnaire only allows people to judge their own mental state, there may be some problems with its accuracy. In this case, so need to add some questions to determine the mental state of everyone in the community. And whether mental state affects people's willingness to be educated and their willingness to go out and socialize. Research findings can be used to better improve the quality of life and attitudes of everyone on a community basis. Therefore, we designed a supplementary questionnaire here. Thank you for your answers. For ethical and professional ethics, we will keep all questionnaire answers confidential, and your answers will be submitted anonymously. If you have any questions, please contact us: jinli.xu@mail.utoronto.ca or mark.duo@mail.utoronto.ca
+
+# Discussions
+
+After a detailed study of the GSS and related psychological and sociological research, we also found that the GSS survey itself has considerable limitations. First, the answers to the questions are entirely based on personal wishes and do not have any substantiation measures. The nature of this answer is itself subjective and egoistic. We should not assume that the entire subject population is honest and objective, especially if the question bank contains many sensitive privacy questions. From a psychological point of view, when people face many questions with negative meanings, their answers will have a certain tendency. For a specific example, such as the question "Do you think you have been sexually assaulted?", the affirmative answer is generally higher than the truth; this phenomenon originates from a complex psychological plot, that is, the Sexual assault in a sense, as bad as it sounds, is a recognition of an individual's sexual attraction, so some people will exaggerate or distort some of the unpleasant experiences they have encountered in their lives as experiences of being sexually assaulted . Although the research on this kind of plot is difficult to carry out in depth due to the cognition of social morality and values, we cannot deny the existence of this potential biased answering tendency.
+
+On the other hand, many questions of GSS itself are also inductive, and inducing questions such as domestic violence and alcoholism are more likely to be answered affirmatively. We believe that data collection in this regard should be carried out from a more objective database. For example, for domestic violence-related data, we should go to the local police database to find relevant information, and for alcohol abuse-related data, go to the government database to find the tobacco and alcohol in the same year. Tax changes to analyze data from the side.
+
+In general, with the GSS data, we have launched a study of the causes of psychological problems and further strengthened our basic knowledge based on sociology and psychology. We believe our research and models can help governments predict and identify individuals who may have psychological problems in the future and provide relevant assistance.
+
+
+```{r 101,fig.cap="General Health and Cyber bullying", fig.width=6, fig.height=5,message=FALSE,echo=FALSE,warning=FALSE}
+a = sum(AA234RAH$cbu_140==1)
+b = sum(AA234RAH$cbu_140==2)
+c = sum(AA234RAH$cbu_140==6)
+cbu110_150table <- AA234RAH %>% filter(!is.na(cbu_140)) %>% 
+  group_by(srh_110) %>% summarise(yes = sum(cbu_140 == 1), no = sum(cbu_140 == 2),
+                                  valid_skip = sum(cbu_140 == 6))
+knitr::kable(cbu110_150table, caption = "General Health and Cyber bullying")
+```
+
+```{r 102,fig.cap="Mental Health and Cyber bullying", fig.width=6, fig.height=5,message=FALSE,echo=FALSE,warning=FALSE}
+cbu115_150table <- AA234RAH %>% 
+  group_by(srh_115) %>% summarise(yes = sum(cbu_140 == 1), 
+                                  no = sum(cbu_140 == 2),
+                                  valid_skip = sum(cbu_140 == 6))
+knitr::kable(cbu115_150table,caption = "Mental Health and Cyber bullying")
+```
+
+```{r 103,fig.cap="about mental health of people broup by encounter in cyber bullying", fig.width=6, fig.height=5,message=FALSE,echo=FALSE,warning=FALSE}
+cexsrh115table <- AA234RAH %>% 
+  group_by(cbu_110) %>% summarise(men1 = sum(srh_115 == 1), 
+                                  men2 = sum(srh_115 == 2),
+                                  men3 = sum(srh_115 == 3),
+                                  men4 = sum(srh_115 == 4),
+                                  men5 = sum(srh_115 == 5))
+knitr::kable(cexsrh115table)
+```
+
+```{r 107,fig.cap="about mental health",message=FALSE,echo=FALSE,warning=FALSE}
+AA234RAH$mental[AA234RAH$srh_115==1] <- "Exellent"
+AA234RAH$mental[AA234RAH$srh_115==2] <- "Very good"
+AA234RAH$mental[AA234RAH$srh_115==3] <- "Good"
+AA234RAH$mental[AA234RAH$srh_115==4] <- "Fair"
+AA234RAH$mental[AA234RAH$srh_115==5] <- "Poor"
+AA234RAH$mental[AA234RAH$srh_115==6] <- "Valid skip"
+AA234RAH$mental[AA234RAH$srh_115==7] <- "Don't know"
+AA234RAH$mental[AA234RAH$srh_115==8] <- "Refusal"
+AA234RAH$mental[AA234RAH$srh_115==9] <- "Not Stated"
+
+
+ggplot(data = AA234RAH,aes(y=mental))+geom_bar()+theme_classic()+labs(x = "Number of people", y = "Situation of mental health", title = "Survey Mental health level")
+```
+
+
+```{r 108,fig.cap="General health",message=FALSE,echo=FALSE,warning=FALSE}
+AA234RAH$body[AA234RAH$srh_110==1] <- "Exellent"
+AA234RAH$body[AA234RAH$srh_110==2] <- "Very good"
+AA234RAH$body[AA234RAH$srh_110==3] <- "Good"
+AA234RAH$body[AA234RAH$srh_110==4] <- "Fair"
+AA234RAH$body[AA234RAH$srh_110==5] <- "Poor"
+AA234RAH$body[AA234RAH$srh_110==6] <- "Valid skip"
+AA234RAH$body[AA234RAH$srh_110==7] <- "Don't know"
+AA234RAH$body[AA234RAH$srh_110==8] <- "Refusal"
+AA234RAH$body[AA234RAH$srh_110==9] <- "Not Stated"
+ggplot(data = AA234RAH,aes(y=body))+geom_bar()+theme_classic()+labs(x = "Number of people", y = "Situation of general health", title = "Survey people's general health level")
+```
+
+
+
+```{r 105,fig.cap="ever physically assaulted by an adult in childhood (srh_115==5: poor mental health)",echo=FALSE,warning=FALSE}
+
+AA234RAH$cex[AA234RAH$cexphys==1] <- "Never"
+AA234RAH$cex[AA234RAH$cexphys==2] <- "Yes, at least once"
+AA234RAH$cex[AA234RAH$cexphys==6] <- "Valid skip"
+AA234RAH$cex[AA234RAH$cexphys==7] <- "Don’t know"
+AA234RAH$cex[AA234RAH$cexphys==8] <- "Refusal"
+AA234RAH$cex[AA234RAH$cexphys==9] <- "Not stated"
+physex <- AA234RAH %>% ggplot(aes(x=cex,fill=srh_115==5)) + geom_bar() + theme_classic()+labs(x = "ever physically assaulted by an adult" , y = "count",title = " physically assaulted & mental condition")
+physex
+```
+
+
+
+```{r 106,fig.cap="about number of friends and mental health", message=FALSE,echo=FALSE,warning=FALSE}
+firend <- AA234RAH %>% filter(isl_100<=200 & srh_115 < 6) 
+firend$mental[firend$srh_115==1] <- "Exellent"
+firend$mental[firend$srh_115==2] <- "Very good"
+firend$mental[firend$srh_115==3] <- "Good"
+firend$mental[firend$srh_115==4] <- "Fair"
+firend$mental[firend$srh_115==5] <- "Poor"
+
+ggplot(data = firend, aes(x = mental, y = isl_100))+geom_boxplot()+theme_classic()+labs(x = "statement of mental level", y = "Number of close firends", title = " Mental health level and the number of firends")
+```
+
+```{r 109,fig.cap="work of local police",message=FALSE,echo=FALSE,warning=FALSE}
+AA234RAH$plp130[AA234RAH$plp_130==1] <- "Good job"
+AA234RAH$plp130[AA234RAH$plp_130==2] <- "Average job"
+AA234RAH$plp130[AA234RAH$plp_130==3] <- "Poor job"
+AA234RAH$plp130[AA234RAH$plp_130==6] <- "Valid skip"
+AA234RAH$plp130[AA234RAH$plp_130==7] <- "Don't know"
+AA234RAH$plp130[AA234RAH$plp_130==8] <- "Refusal"
+AA234RAH$plp130[AA234RAH$plp_130==9] <- "Not stated"
+
+ggplot(data = AA234RAH,aes(y=plp130))+geom_bar()+theme_classic()+labs(x = "Number of people", y = "Work done by Local Police", title = "Survey local police being approachable and easy to talk to")
+
+```
+
+```{r 111, fig.cap = "VIF of model",message=FALSE,echo=FALSE,warning=FALSE,include=FALSE}
+clean_data <- AA234RAH %>% filter(srh_115 < 6 & isl_100 <= 200)
+#clean cbu_110 create new varibale cbu_110n
+clean_data$cbu_110n[clean_data$cbu_110==1] <- 1
+clean_data$cbu_110n[clean_data$cbu_110==2] <- 2
+clean_data$cbu_110n[clean_data$cbu_110 > 2] <- 0
+#clean cbu_140 create new varibale cbu_140n
+clean_data$cbu_140n[clean_data$cbu_140==1] <- 1
+clean_data$cbu_140n[clean_data$cbu_140==2] <- 2
+clean_data$cbu_140n[clean_data$cbu_140 > 2] <- 0
+#cexabu
+clean_data$cexabun[clean_data$cexabu==1] <- 1
+clean_data$cexabun[clean_data$cexabu==2] <- 2
+clean_data$cexabun[clean_data$cexabu==3] <- 3
+clean_data$cexabun[clean_data$cexabu > 3] <- 0
+#cexphys
+clean_data$cexphysn[clean_data$cexphys==1] <- 1
+clean_data$cexphysn[clean_data$cexphys==2] <- 2
+clean_data$cexphysn[clean_data$cexphys > 2] <- 0
+#cexsex
+clean_data$cexsexn[clean_data$cexsex==1] <- 1
+clean_data$cexsexn[clean_data$cexsex==2] <- 2
+clean_data$cexsexn[clean_data$cexsex > 2] <- 0
+#cex_080
+clean_data$cex_080n[clean_data$cex_080==1] <- 1
+clean_data$cex_080n[clean_data$cex_080==2] <- 2
+clean_data$cex_080n[clean_data$cex_080==3] <- 3
+clean_data$cex_080n[clean_data$cex_080==4] <- 4
+clean_data$cex_080n[clean_data$cex_080==5] <- 5
+clean_data$cex_080n[clean_data$cex_080>5] <- 0
+#drp_110
+clean_data$drp_110n[clean_data$drp_110 ==1] <- 1
+clean_data$drp_110n[clean_data$drp_110 ==2] <- 2
+clean_data$drp_110n[clean_data$drp_110 ==3] <- 3
+clean_data$drp_110n[clean_data$drp_110 ==4] <- 4
+clean_data$drp_110n[clean_data$drp_110 ==5] <- 5
+clean_data$drp_110n[clean_data$drp_110 ==6] <- 6
+clean_data$drp_110n[clean_data$drp_110 ==7] <- 7
+clean_data$drp_110n[clean_data$drp_110 > 7] <- 0
+#drr_110
+clean_data$drr_110n[clean_data$drr_110 ==1] <- 1
+clean_data$drr_110n[clean_data$drr_110 ==2] <- 2
+clean_data$drr_110n[clean_data$drr_110 ==3] <- 3
+clean_data$drr_110n[clean_data$drr_110 ==4] <- 4
+clean_data$drr_110n[clean_data$drr_110 ==5] <- 5
+clean_data$drr_110n[clean_data$drr_110 ==6] <- 6
+clean_data$drr_110n[clean_data$drr_110 ==7] <- 7
+clean_data$drr_110n[clean_data$drr_110 > 7] <- 0
+#dup_100
+clean_data$dup_100n[clean_data$dup_100 ==1] <- 1
+clean_data$dup_100n[clean_data$dup_100 ==2] <- 2
+clean_data$dup_100n[clean_data$dup_100 > 2] <- 0
+#dur_100
+clean_data$dur_100n[clean_data$dur_100 ==1] <- 1
+clean_data$dur_100n[clean_data$dur_100 ==2] <- 2
+clean_data$dur_100n[clean_data$dur_100 > 2] <- 0
+#dur_110
+clean_data$dur_110n[clean_data$dur_110 ==1] <- 1
+clean_data$dur_110n[clean_data$dur_110 ==2] <- 2
+clean_data$dur_110n[clean_data$dur_110 > 2] <- 0
+#hom_10
+clean_data$hom_10n[clean_data$hom_10 ==1] <- 1
+clean_data$hom_10n[clean_data$hom_10 ==2] <- 2
+clean_data$hom_10n[clean_data$hom_10 > 2] <- 0
+
+model_full_1.0 <- lm(clean_data$srh_115 ~ clean_data$isl_100 + clean_data$cbu_110n + clean_data$cbu_140n + clean_data$cexabun + clean_data$cexphysn + clean_data$cexsexn + clean_data$cex_080n + clean_data$drp_110n + clean_data$drr_110n + clean_data$dup_100n + clean_data$dur_100n + clean_data$dur_110n + clean_data$hom_10n)
+vif(model_full_1.0)
+
+```
+
+
+```{r 112, fig.cap = "table of model",message=FALSE,echo=FALSE,warning=FALSE}
+modeldur100 <- lm(clean_data$srh_115 ~ clean_data$isl_100 + 
+    clean_data$cbu_110n + clean_data$cexphysn + 
+    clean_data$cex_080n + clean_data$drr_110n + 
+    clean_data$dup_100n + clean_data$dur_100n + 
+    clean_data$hom_10n)
+summary(modeldur100)
+```
+
+
+
+```{r 115, fig.cap = "table of education model",message=FALSE,echo=FALSE,warning=FALSE}
+
+edumodel <- AA234RAH %>% filter(ehg3_01 < 8 & eduf10 < 11 & edum10 < 11 & edupr10 < 11 & wet_110 < 53 & whw_120 < 200) 
+
+newmodel <- lm(edumodel$ehg3_01 ~ edumodel$eduf10 + edumodel$edum10 + edumodel$edupr10 + 
+    edumodel$whw_120)
+summary(newmodel)
+```
+
+
+```{r 116, fig.cap = "Plot of education model",message=FALSE,echo=FALSE,warning=FALSE}
+par(mfrow = c(2,2))
+plot(newmodel)
+```
+
+
+
+\newpage
+# Appendix
+
+link: https://docs.google.com/forms/d/e/1FAIpQLSfazmCM32OiawPL8F6j7JCjTFqF6L5fRwOZAnW1at42iWUBzA/viewform?usp=sf_link
+
+
+\newpage
+# Reference
+NOAM, G., & HERMANN, C. (2002). Where education and mental health meet: Developmental prevention and early intervention in schools. Development and Psychopathology, 14(4), 861-875. doi:10.1017/S0954579402004108
+
+Megan V. Smith, Carolyn M. Mazure, Mental Health and Wealth: Depression, Gender, Poverty, and Parenting, Annual Review of Clinical Psychology, 10.1146/annurev-clinpsy-071219-022710, 17, 1, (181-205), (2021).
+
+Ryan, W. C. (1938). Mental health through education. Commonwealth Fund.
+
+General Social Survey Cycle 28: Canadians’ Safety and Security (Provinces) Public Use Microdata File Documentation and User’s Guide Catalogue no. 12M0026Xhttps://sda-artsci-utoronto-ca.myaccess.library.utoronto.ca/sdaweb/dli2/gss/gss28/gss28/more_doc/index.htm
